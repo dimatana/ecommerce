@@ -1,7 +1,7 @@
 package com.training.ecommerce;
 
-import com.training.ecommerce.Repository.ProductRepository;
-import com.training.ecommerce.Repository.UserRepository;
+import com.training.ecommerce.model.User;
+import com.training.ecommerce.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
