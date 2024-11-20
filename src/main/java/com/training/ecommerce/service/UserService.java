@@ -1,5 +1,7 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.dto.UserDTO;
+import com.training.ecommerce.dto.UserRegistrationDTO;
 import com.training.ecommerce.repository.UserRepository;
 import com.training.ecommerce.model.User;
 import jakarta.transaction.Transactional;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -16,34 +19,57 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    //register new user
+    //register new user DTO
     @Transactional
-    public User registerUser(User user){
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+    public UserDTO registerUser(UserRegistrationDTO userDTO){
+        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
             throw  new IllegalArgumentException("Email already registered");
         }
-        return userRepository.save(user);
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setAddress(userDTO.getAddress());
+        userDTO.setEmail(userDTO.getEmail());
+        userDTO.setPassword(userDTO.getPassword());
+
+        User savedUser = userRepository.save(user);
+        return new UserDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getAddress());
     }
     //login user
     public User findByEmailAndPassword(String email, String password){
         return userRepository.findByEmailAndPassword(email, password);
     }
-    //get all users
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    //get all users DTO
+    public List<UserDTO> getAllUsers(){
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAddress()))
+                .collect(Collectors.toList());
     }
     //get a user by id
-    public Optional<User> getUserById(Long id){
-        return userRepository.findById(id);
+    public Optional<UserDTO> getUserById(Long id){
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            UserDTO userDTO = new UserDTO(user.get().getId(), user.get().getName(), user.get().getEmail(), user.get().getAddress());
+            return Optional.of(userDTO);
+        }else {
+            return Optional.empty(); //daca utilizatorul nu exista
+        }
     }
     //update user details
-    public User updateUser(Long id, User userDetails){
+    public UserDTO updateUser(Long id, UserDTO userDetails){
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found for this id ::" +id));
-        user.setName(userDetails.getName());
-        user.setAddress(userDetails.getAddress());
-        user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
-        return userRepository.save(user);
+
+        if (userDetails.getName() != null){
+            user.setName(userDetails.getName());
+        }
+        if (userDetails.getEmail() != null){
+            user.setEmail(userDetails.getEmail());
+        }
+        if (userDetails.getAddress() != null){
+            user.setAddress(userDetails.getAddress());
+        }
+        User updateUser =userRepository.save(user);
+        return new UserDTO(updateUser.getId(), updateUser.getName(), updateUser.getEmail(), updateUser.getAddress());
     }
     //delete a user
     public void deleteUser(Long id) {
