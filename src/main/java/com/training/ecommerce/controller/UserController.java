@@ -1,24 +1,32 @@
 package com.training.ecommerce.controller;
 
+import com.training.ecommerce.api.UsersApi;
 import com.training.ecommerce.dto.UserDTO;
 import com.training.ecommerce.dto.UserRegistrationDTO;
+import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.service.ResourceNotFoundException;
 import com.training.ecommerce.service.UserService;
-import com.training.ecommerce.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements UsersApi {
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Override
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userDTO){
         try {
@@ -37,10 +45,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid credentials");
         }
     }
-    @GetMapping("/")
-    public List<UserDTO> getAllUsers(){
-        return userService.getAllUsers();
-    }
+
     @GetMapping("/{users}/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
         Optional<UserDTO> userDTO = userService.getUserById(id);

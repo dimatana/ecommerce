@@ -2,6 +2,8 @@ package com.training.ecommerce.service;
 
 import com.training.ecommerce.dto.UserDTO;
 import com.training.ecommerce.dto.UserRegistrationDTO;
+import com.training.ecommerce.mapper.UserMapper;
+import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.repository.UserRepository;
 import com.training.ecommerce.model.User;
 import jakarta.transaction.Transactional;
@@ -14,42 +16,38 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public UserService(final UserRepository userRepository, final UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
+        this.userMapper = userMapper;
     }
 
     //register new user DTO
     @Transactional
     public UserDTO registerUser(UserRegistrationDTO userDTO){
         if (userRepository.findByEmail(userDTO.getEmail()) != null) {
-            throw  new IllegalArgumentException("Email already registered");
+            throw new IllegalArgumentException("Email already registered");
         }
-        User user = new User();
-        user.setName(userDTO.getName());
-        user.setAddress(userDTO.getAddress());
-        userDTO.setEmail(userDTO.getEmail());
-        userDTO.setPassword(userDTO.getPassword());
-
+        final User user = userMapper.toEntity(userDTO);
         User savedUser = userRepository.save(user);
-        return new UserDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getAddress());
+        return userMapper.toDTO(savedUser);
     }
     //login user
     public UserDTO findByEmailAndPassword(String email, String password){
         User user = userRepository.findByEmailAndPassword(email, password);
         if (user != null){
-            return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAddress());
+            return userMapper.toDTO(user);
         }
         return null;
     }
     //get all users DTO
-    public List<UserDTO> getAllUsers(){
+    public List<UserDto> getAllUsers(){
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAddress()))
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
     //get a user by id
@@ -76,12 +74,13 @@ public class UserService {
             user.setAddress(userDetails.getAddress());
         }
         User updateUser =userRepository.save(user);
-        return new UserDTO(updateUser.getId(), updateUser.getName(), updateUser.getEmail(), updateUser.getAddress());
+        return userMapper.toDTO(updateUser);
     }
     //delete a user
     public void deleteUser(Long id) {
-        User user;
-        user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found for this id ::" +id));
+        final User user = userRepository.findById(id)
+                                        .orElseThrow(() -> new ResourceNotFoundException("user not found for this id ::"
+                                                                                         + id));
         userRepository.delete(user);
     }
 }

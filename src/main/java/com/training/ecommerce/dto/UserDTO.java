@@ -1,7 +1,5 @@
 package com.training.ecommerce.dto;
 
-import com.training.ecommerce.model.User;
-
 public class UserDTO {
     private Long id;
     private String name;
