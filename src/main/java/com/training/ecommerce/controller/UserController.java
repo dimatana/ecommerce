@@ -30,18 +30,18 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
-        User user = userService.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        UserDTO user = userService.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
         if (user != null) {
             return ResponseEntity.ok("Login successful");
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid credentials");
         }
     }
-    @GetMapping("/{id}")
+    @GetMapping("/")
     public List<UserDTO> getAllUsers(){
         return userService.getAllUsers();
     }
-    @GetMapping("/{id}")
+    @GetMapping("/{users}/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
         Optional<UserDTO> userDTO = userService.getUserById(id);
         return userDTO.map(ResponseEntity::ok)

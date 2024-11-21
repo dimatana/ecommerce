@@ -5,6 +5,7 @@ import com.training.ecommerce.dto.UserRegistrationDTO;
 import com.training.ecommerce.repository.UserRepository;
 import com.training.ecommerce.model.User;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     //register new user DTO
@@ -35,8 +38,12 @@ public class UserService {
         return new UserDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getAddress());
     }
     //login user
-    public User findByEmailAndPassword(String email, String password){
-        return userRepository.findByEmailAndPassword(email, password);
+    public UserDTO findByEmailAndPassword(String email, String password){
+        User user = userRepository.findByEmailAndPassword(email, password);
+        if (user != null){
+            return new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getAddress());
+        }
+        return null;
     }
     //get all users DTO
     public List<UserDTO> getAllUsers(){
