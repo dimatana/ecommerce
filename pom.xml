@@ -137,6 +137,7 @@
 								<interfaceOnly>true</interfaceOnly> <!-- Generate only interfaces -->
 								<useTags>true</useTags>
 								<useSpringBoot3>true</useSpringBoot3><!-- Use tags for API grouping -->
+								<skipDefaultInterface>true</skipDefaultInterface>
 							</configOptions>
 						</configuration>
 					</execution>
