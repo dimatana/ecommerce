@@ -1,60 +1,57 @@
 package com.training.ecommerce.controller;
 
-import com.training.ecommerce.dto.UserDTO;
+import com.training.ecommerce.api.UsersApi;
 import com.training.ecommerce.dto.UserRegistrationDTO;
-import com.training.ecommerce.service.ResourceNotFoundException;
+import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.service.UserService;
-import com.training.ecommerce.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class
+UserController implements UsersApi {
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Override
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userDTO){
         try {
-            UserDTO registeredUser = userService.registerUser(userDTO);
+            UserDto registeredUser = userService.registerUser(userDTO);
             return ResponseEntity.ok(registeredUser);
         }catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
-        UserDTO user = userService.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-        if (user != null) {
-            return ResponseEntity.ok("Login successful");
-        }else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid credentials");
-        }
+    @GetMapping("/login")
+    public ResponseEntity<UserDto> loginUser(@RequestParam String email, @RequestParam String password) {
+        return userService.findByEmailAndPassword(email, password)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
-    @GetMapping("/")
-    public List<UserDTO> getAllUsers(){
-        return userService.getAllUsers();
-    }
+
     @GetMapping("/{users}/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id){
-        Optional<UserDTO> userDTO = userService.getUserById(id);
-        return userDTO.map(ResponseEntity::ok)
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
+        Optional<UserDto> userDto = userService.getUserById(id);
+        return userDto.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,@RequestBody UserDTO userUpdateDTO){
-        try {
-            UserDTO updateUser = userService.updateUser(id, userUpdateDTO);
-            return ResponseEntity.ok(updateUser);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,@RequestBody UserDto userDetails){
+            UserDto updatedUser = userService.updateUser(id, userDetails);
+            return ResponseEntity.ok(updatedUser);
     }
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
