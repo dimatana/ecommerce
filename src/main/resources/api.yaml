@@ -26,6 +26,27 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserDto'
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Register a new user
+      operationId: registerUser
+      description: Registers a new user
+      requestBody:
+        description: User registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationDto'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
 
 components:
   schemas:
@@ -48,3 +69,23 @@ components:
         address:
           type: string
           description: The name of the event
+    UserRegistrationDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+        email:
+          type: string
+          description: The email address of the user
+        address:
+          type: string
+          description: The address of the user
+        password:
+          type: string
+          description: The password of the user
+      required:
+        - name
+        - email
+        - address
+        - password
