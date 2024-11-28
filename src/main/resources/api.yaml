@@ -10,6 +10,9 @@ tags:
     description: User Description
 
 paths:
+  ###########################################################################################
+  # Users
+  ###########################################################################################
   /users:
     get:
       tags:
@@ -26,6 +29,80 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserDto'
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by its id
+      operationId: getUser
+      description: Get a user by its id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the user
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: myRequestParam
+          required: false
+          description: The id of the sport to return
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+    put:
+      tags:
+        - Users
+      summary: Update a user by its id
+      operationId: updateUser
+      description: Update a user by its id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the user
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: User details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+    delete:
+      tags:
+        - Users
+      summary: Delete user by id
+      operationId: deleteUser
+      description:  Delete user by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The id of the user
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: No Content
   /users/register:
     post:
       tags:
@@ -47,6 +124,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDto'
+
+  ###########################################################################################
+  # Package
+  ###########################################################################################
 
 components:
   schemas:

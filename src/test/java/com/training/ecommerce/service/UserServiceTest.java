@@ -1,15 +1,16 @@
 package com.training.ecommerce.service;
 
-import com.training.ecommerce.dto.UserRegistrationDTO;
 import com.training.ecommerce.mapper.UserMapper;
 import com.training.ecommerce.model.User;
 import com.training.ecommerce.model.UserDto;
+import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class UserServiceTest {
     @Test
     void testRegisterUser() {
 
-        UserRegistrationDTO userRegistrationDTO = mock(UserRegistrationDTO.class);
+        UserRegistrationDto userRegistrationDTO = mock(UserRegistrationDto.class);
         final User user = mock(User.class);
         final UserDto userDto = mock(UserDto.class);
 
@@ -54,7 +55,7 @@ public class UserServiceTest {
 
     @Test
     public void testRegisterUserThrowExceptionWhenEmailExists() {
-        UserRegistrationDTO userRegistrationDTO = mock(UserRegistrationDTO.class);
+        UserRegistrationDto userRegistrationDTO = mock(UserRegistrationDto.class);
 
         when(userRegistrationDTO.getEmail()).thenReturn("tana");
         when(userRepository.findByEmail("tana")).thenReturn(mock(User.class));
@@ -106,11 +107,19 @@ public class UserServiceTest {
         when(userMapper.toDto(user)).thenReturn(userDto);
 
         //apelam metoda de testat
-        Optional<UserDto> result = userService.getUserById(1L);
+        UserDto result = userService.getUserById(1L);
 
         //verificam rezultatul
-        assertTrue(result.isPresent());
-        assertEquals(userDto, result.get());
+        assertEquals(userDto, result);
+    }
+
+    @Test
+    public void testGetUserById_when_not_found() {
+        //definim comportamentul mock-urilor
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //apelam metoda de testat
+        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(1L));
     }
 
     @Test

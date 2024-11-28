@@ -1,6 +1,5 @@
 package com.training.ecommerce.mapper;
 
-import com.training.ecommerce.dto.UserRegistrationDTO;
 import com.training.ecommerce.model.User;
 import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.model.UserRegistrationDto;
@@ -11,10 +10,7 @@ public interface UserMapper {
 
     UserDto toDto(User user);
 
-
     User toEntity(UserDto userDto);
-
-    User toEntity(UserRegistrationDTO userRegistrationDTO);
 
     User toEntity(UserRegistrationDto userRegistrationDto);
 }

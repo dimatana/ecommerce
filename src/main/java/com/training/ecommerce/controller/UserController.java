@@ -1,20 +1,22 @@
 package com.training.ecommerce.controller;
 
 import com.training.ecommerce.api.UsersApi;
-import com.training.ecommerce.dto.UserRegistrationDTO;
 import com.training.ecommerce.model.UserDto;
+import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-public class
-UserController implements UsersApi {
+public class UserController implements UsersApi {
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -26,15 +28,12 @@ UserController implements UsersApi {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userDTO){
-        try {
-            UserDto registeredUser = userService.registerUser(userDTO);
-            return ResponseEntity.ok(registeredUser);
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    @Override
+    public ResponseEntity<UserDto> registerUser(final UserRegistrationDto userRegistrationDto) {
+        UserDto registeredUser = userService.registerUser(userRegistrationDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
+
     @GetMapping("/login")
     public ResponseEntity<UserDto> loginUser(@RequestParam String email, @RequestParam String password) {
         return userService.findByEmailAndPassword(email, password)
@@ -42,39 +41,20 @@ UserController implements UsersApi {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    @GetMapping("/{users}/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
-        Optional<UserDto> userDto = userService.getUserById(id);
-        return userDto.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    @Override
+    public ResponseEntity<UserDto> getUser(final Long id, final Long myRequestParam) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,@RequestBody UserDto userDetails){
-            UserDto updatedUser = userService.updateUser(id, userDetails);
-            return ResponseEntity.ok(updatedUser);
+
+    @Override
+    public ResponseEntity<UserDto> updateUser(final Long id, final UserDto userDto) {
+        UserDto updatedUser = userService.updateUser(id, userDto);
+        return ResponseEntity.ok(updatedUser);
     }
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+
+    @Override
+    public ResponseEntity<Void> deleteUser(final Long id) {
         userService.deleteUser(id);
-    }
-    public static class LoginRequest{
-        private String email;
-        private String password;
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        return ResponseEntity.noContent().build();
     }
 }
