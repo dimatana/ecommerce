@@ -124,6 +124,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDto'
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login an existing user
+      operationId: loginUser
+      description: Login an existing user
+#      parameters:
+#        - in: path
+#          name: email
+#          required: false
+#          description: The email of the user
+#          schema:
+#            type: string
+#        - in: path
+#          name: password
+#          required: false
+#          description: The password of the user
+#          schema:
+#            type: string
+      requestBody:
+        description: User login details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDto'
+      responses:
+        '200':
+          description: User logged successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
 
   ###########################################################################################
   # Package
@@ -169,4 +203,16 @@ components:
         - name
         - email
         - address
+        - password
+    UserLoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email of the user
+        password:
+          type: string
+          description: The password of the user
+      required:
+        - email
         - password

@@ -2,12 +2,13 @@ package com.training.ecommerce.controller;
 
 import com.training.ecommerce.api.UsersApi;
 import com.training.ecommerce.model.UserDto;
+import com.training.ecommerce.model.UserLoginDto;
 import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
 public class UserController implements UsersApi {
     private final UserService userService;
 
@@ -34,11 +34,10 @@ public class UserController implements UsersApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<UserDto> loginUser(@RequestParam String email, @RequestParam String password) {
-        return userService.findByEmailAndPassword(email, password)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    @Override
+    public ResponseEntity<UserDto> loginUser(final UserLoginDto userLoginDto) {
+         Optional<UserDto> loggedUser = userService.loginUser(userLoginDto);
+         return loggedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @Override

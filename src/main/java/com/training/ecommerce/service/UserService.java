@@ -3,6 +3,7 @@ package com.training.ecommerce.service;
 import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.mapper.UserMapper;
 import com.training.ecommerce.model.UserDto;
+import com.training.ecommerce.model.UserLoginDto;
 import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.repository.UserRepository;
 import com.training.ecommerce.model.User;
@@ -35,8 +36,8 @@ public class UserService {
         return userMapper.toDto(savedUser);
     }
     //login user
-    public Optional <UserDto> findByEmailAndPassword(String email, String password) {
-        return Optional.ofNullable(userRepository.findByEmailAndPassword(email, password))
+    public Optional<UserDto> loginUser(UserLoginDto userLoginDto) {
+        return Optional.ofNullable(userRepository.findByEmailAndPassword("dima", "1234"))
                 .map(userMapper::toDto);
     }
     //get all users DTO
@@ -70,4 +71,5 @@ public class UserService {
                                                                                          + id));
         userRepository.delete(user);
     }
+
 }

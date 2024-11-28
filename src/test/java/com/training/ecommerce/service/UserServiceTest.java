@@ -4,6 +4,7 @@ import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.mapper.UserMapper;
 import com.training.ecommerce.model.User;
 import com.training.ecommerce.model.UserDto;
+import com.training.ecommerce.model.UserLoginDto;
 import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -65,14 +64,15 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindByEmailAndPassword() {
+    public void testLoginUser() {
         User user = mock(User.class);
         UserDto userDto = mock(UserDto.class);
+        UserLoginDto userLoginDto = mock(UserLoginDto.class);
 
         when(userRepository.findByEmailAndPassword("dima", "1234")).thenReturn(user);
         when(userMapper.toDto(user)).thenReturn(userDto);
 
-        Optional<UserDto> result = userService.findByEmailAndPassword("dima", "1234");
+        Optional<UserDto> result = userService.loginUser(userLoginDto);
 
         assertTrue(result.isPresent());
         assertEquals(userDto, result.get());
