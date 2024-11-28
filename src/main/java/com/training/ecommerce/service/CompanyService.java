@@ -1,5 +1,6 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.model.Company;
 import com.training.ecommerce.repository.CompanyRepository;
 import org.springframework.stereotype.Service;

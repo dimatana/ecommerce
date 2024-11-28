@@ -1,5 +1,6 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.model.Order;
 import com.training.ecommerce.model.Package;
 import com.training.ecommerce.model.Product;
@@ -42,7 +43,7 @@ public class ProductService {
     }
     //update a product
     public Product updateProduct(Long id, Product productDetails){
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found for this id :: " +id));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found for this id :: " + id));
         product.setName(productDetails.getName());
         product.setDescription(product.getDescription());
         product.setPrice(product.getPrice());

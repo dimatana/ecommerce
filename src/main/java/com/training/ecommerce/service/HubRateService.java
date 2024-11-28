@@ -1,5 +1,6 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.model.HubRate;
 import com.training.ecommerce.repository.HubRateRepository;
 import org.springframework.stereotype.Service;
