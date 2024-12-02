@@ -1,10 +1,8 @@
 package com.training.ecommerce.model;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
-
 @Entity
 public class Basket {
     @Id
@@ -15,14 +13,6 @@ public class Basket {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public Set<BasketItem> getItems() {
-        return items;
-    }
-
-    public void setItems(Set<BasketItem> items) {
-        this.items = items;
-    }
 
     public Long getId() {
         return id;
@@ -38,5 +28,13 @@ public class Basket {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<BasketItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<BasketItem> items) {
+        this.items = items;
     }
 }

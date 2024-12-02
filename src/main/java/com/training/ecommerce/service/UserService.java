@@ -1,12 +1,13 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.exception.EmailAlreadyRegisteredException;
 import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.mapper.UserMapper;
+import com.training.ecommerce.model.User;
 import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.model.UserLoginDto;
 import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.repository.UserRepository;
-import com.training.ecommerce.model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class UserService {
     @Transactional
     public UserDto registerUser(UserRegistrationDto userRegistrationDto){
         if (userRepository.findByEmail(userRegistrationDto.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new EmailAlreadyRegisteredException("Email already registered");
         }
         final User user = userMapper.toEntity(userRegistrationDto);
         User savedUser = userRepository.save(user);
@@ -51,7 +52,8 @@ public class UserService {
     public UserDto getUserById(Long id){
         //todo look at the @ControllerAdvice
         return userRepository.findById(id)
-                .map(userMapper::toDto).orElseThrow(() -> new ResourceNotFoundException("user with id %s not found".formatted(id)));
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("user with id %s not found".formatted(id)));
     }
     //update user details
     public UserDto updateUser(Long id, UserDto userDetails){

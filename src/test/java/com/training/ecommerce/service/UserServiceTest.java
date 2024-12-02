@@ -1,5 +1,6 @@
 package com.training.ecommerce.service;
 
+import com.training.ecommerce.exception.EmailAlreadyRegisteredException;
 import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.mapper.UserMapper;
 import com.training.ecommerce.model.User;
@@ -60,7 +61,7 @@ public class UserServiceTest {
         when(userRegistrationDTO.getEmail()).thenReturn("tana");
         when(userRepository.findByEmail("tana")).thenReturn(mock(User.class));
 
-        assertThrows(IllegalArgumentException.class, () -> userService.registerUser(userRegistrationDTO));
+        assertThrows(EmailAlreadyRegisteredException.class, () -> userService.registerUser(userRegistrationDTO));
     }
 
     @Test

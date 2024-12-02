@@ -1,7 +1,6 @@
 package com.training.ecommerce.repository;
 
 import com.training.ecommerce.model.User;
-import com.training.ecommerce.model.UserLoginDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

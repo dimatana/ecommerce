@@ -1,6 +1,9 @@
 package com.training.ecommerce.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 
 @Entity
 public class BasketItem {
@@ -18,20 +21,20 @@ public class BasketItem {
 
     private int quantity;
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Basket getBasket() {
+        return basket;
+    }
+
+    public void setBasket(Basket basket) {
+        this.basket = basket;
     }
 
     public Product getProduct() {
@@ -42,11 +45,11 @@ public class BasketItem {
         this.product = product;
     }
 
-    public Basket getBasket() {
-        return basket;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setBasket(Basket basket) {
-        this.basket = basket;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

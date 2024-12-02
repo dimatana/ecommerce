@@ -5,11 +5,8 @@ import com.training.ecommerce.model.UserDto;
 import com.training.ecommerce.model.UserLoginDto;
 import com.training.ecommerce.model.UserRegistrationDto;
 import com.training.ecommerce.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

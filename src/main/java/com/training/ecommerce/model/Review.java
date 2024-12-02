@@ -2,6 +2,7 @@ package com.training.ecommerce.model;
 
 import jakarta.persistence.*;
 
+
 @Entity
 public class Review {
     @Id
