@@ -1,8 +1,11 @@
 package com.training.ecommerce.service;
 
 import com.training.ecommerce.exception.ResourceNotFoundException;
+import com.training.ecommerce.mapper.PackageMapper;
 import com.training.ecommerce.model.Package;
 
+import com.training.ecommerce.model.PackageDto;
+import com.training.ecommerce.model.Product;
 import com.training.ecommerce.repository.PackageRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,36 +15,42 @@ import java.util.Optional;
 @Service
 public class PackageService {
     private final PackageRepository packageRepository;
+    private final PackageMapper packageMapper;
 
-    public PackageService(PackageRepository packageRepository) {
+    public PackageService(PackageRepository packageRepository, PackageMapper packageMapper) {
         this.packageRepository = packageRepository;
+        this.packageMapper = packageMapper;
     }
 
-    //register a new package
-    public Package registerPackage(Package aPackage){
-        return packageRepository.save(aPackage);
+    public PackageDto registerPackage(PackageDto packageDto){
+        Package aPackage = packageMapper.toEntity(packageDto);
+        Package createdPackage = packageRepository.save(aPackage);
+        return packageMapper.toDto(createdPackage);
     }
-    //get all packages
-    public List<Package> getAllPackages(){
-        return packageRepository.findAll();
+
+    public List<PackageDto> getAllPackages(){
+        List<Package> packages = packageRepository.findAll();
+        return packages.stream().map(packageMapper::toDto).toList();
     }
-    //get a package by id
-    public Optional<Package> getPackageById(Long id){
-        return packageRepository.findById(id);
+
+    public PackageDto getPackageById(Long id){
+        return packageRepository.findById(id)
+                .map(packageMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("package not found for this id::" +id));
     }
-    //update package details
-    public Package updatePackage (Long id, Package packageDetails){
+
+    public PackageDto updatePackage (Long id, PackageDto packageDetails){
         Package aPackage = packageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("package not found for this id ::" + id));
         aPackage.setDeliveryDate(packageDetails.getDeliveryDate());
         aPackage.setReceiver(packageDetails.getReceiver());
         aPackage.setSender(packageDetails.getSender());
         aPackage.setStatus(packageDetails.getStatus());
-        return packageRepository.save(aPackage);
+        Package updatedPackage = packageRepository.save(aPackage);
+        return packageMapper.toDto(updatedPackage);
     }
-    //delete a package
-    public void delletePackage(Long id){
-        Package aPackage = packageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("package not found for this id ::" + id));
-        packageRepository.delete(aPackage);
+
+    public void deletePackage(Long id){
+        packageRepository.deleteById(id);
     }
 }
 

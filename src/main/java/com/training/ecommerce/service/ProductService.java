@@ -31,7 +31,7 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
         return products.stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
     //get a product by ID
     public ProductDto getProductById(Long id){
@@ -52,8 +52,7 @@ public class ProductService {
     }
     //delete a product
     public void deleteProduct (Long id){
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found for id ::" + id));
-        productRepository.delete(product);
+        productRepository.deleteById(id);
     }
 
 }
