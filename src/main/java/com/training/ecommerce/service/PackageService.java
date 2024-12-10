@@ -2,6 +2,7 @@ package com.training.ecommerce.service;
 
 import com.training.ecommerce.exception.ResourceNotFoundException;
 import com.training.ecommerce.mapper.PackageMapper;
+import com.training.ecommerce.mapper.UserMapper;
 import com.training.ecommerce.model.Package;
 
 import com.training.ecommerce.model.PackageDto;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class PackageService {
     private final PackageRepository packageRepository;
     private final PackageMapper packageMapper;
+    private final UserMapper userMapper;
 
-    public PackageService(PackageRepository packageRepository, PackageMapper packageMapper) {
+    public PackageService(PackageRepository packageRepository, PackageMapper packageMapper, UserMapper userMapper) {
         this.packageRepository = packageRepository;
         this.packageMapper = packageMapper;
+        this.userMapper = userMapper;
     }
 
     public PackageDto registerPackage(PackageDto packageDto){
@@ -42,8 +45,8 @@ public class PackageService {
     public PackageDto updatePackage (Long id, PackageDto packageDetails){
         Package aPackage = packageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("package not found for this id ::" + id));
         aPackage.setDeliveryDate(packageDetails.getDeliveryDate());
-        aPackage.setReceiver(packageDetails.getReceiver());
-        aPackage.setSender(packageDetails.getSender());
+        aPackage.setReceiver(userMapper.toEntity(packageDetails.getReceiver()));
+        aPackage.setSender(userMapper.toEntity(packageDetails.getSender()));
         aPackage.setStatus(packageDetails.getStatus());
         Package updatedPackage = packageRepository.save(aPackage);
         return packageMapper.toDto(updatedPackage);
